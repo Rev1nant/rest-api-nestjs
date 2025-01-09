@@ -6,7 +6,6 @@ import {
   Param,
   Patch,
   Post,
-  Query,
 } from '@nestjs/common';
 import { MoviesService } from './movies.service';
 import { Movie } from './entities/movie.entity';
@@ -16,11 +15,6 @@ import { updateMovieDto } from './dto/update-movie.dto';
 @Controller('movies')
 export class MoviesController {
   constructor(private readonly MoviesService: MoviesService) {}
-
-  @Get('search')
-  search(@Query('name') movieName: string) {
-    return `Мы ищем фильм с названием: ${movieName}`;
-  }
 
   @Get()
   getAll(): Movie[] {
