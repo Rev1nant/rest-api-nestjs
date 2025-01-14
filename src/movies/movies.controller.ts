@@ -11,7 +11,9 @@ import { MoviesService } from './movies.service';
 import { Movie } from './entities/movie.entity';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { updateMovieDto } from './dto/update-movie.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('movies')
 @Controller('movies')
 export class MoviesController {
   constructor(private readonly MoviesService: MoviesService) {}
