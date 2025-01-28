@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsNumber, IsObject, IsOptional, IsString } from 'class-validator';
+import { CreateGenreDto } from './create-genres.dto';
 
 export class CreateMovieDto {
   @IsString()
@@ -17,10 +18,10 @@ export class CreateMovieDto {
   readonly year: number;
 
   @IsOptional()
-  @IsString({ each: true })
+  @IsObject({ each: true })
   @ApiProperty({
     example: ['test-genre'],
     required: true,
   })
-  readonly genres: string[];
+  readonly genres: CreateGenreDto[];
 }

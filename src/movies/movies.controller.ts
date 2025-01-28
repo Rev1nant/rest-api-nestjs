@@ -8,7 +8,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { MoviesService } from './movies.service';
-import { Movie } from './entities/movie.entity';
+import { Movie } from '@prisma/client';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { updateMovieDto } from './dto/update-movie.dto';
 import { ApiTags } from '@nestjs/swagger';
@@ -19,27 +19,30 @@ export class MoviesController {
   constructor(private readonly MoviesService: MoviesService) {}
 
   @Get()
-  getAll(): Movie[] {
+  async getAll(): Promise<Movie[]> {
     return this.MoviesService.getAll();
   }
 
   @Get(':id')
-  getOne(@Param('id') movieId: number): Movie {
-    return this.MoviesService.getOne(movieId);
+  async getOne(@Param('id') id: number): Promise<Movie> {
+    return this.MoviesService.getOne(id);
   }
 
   @Post()
-  create(@Body() movieData: CreateMovieDto) {
+  async create(@Body() movieData: CreateMovieDto): Promise<Movie> {
     return this.MoviesService.create(movieData);
   }
 
   @Patch(':id')
-  patch(@Param('id') movieId: number, @Body() updateData: updateMovieDto) {
+  async patch(
+    @Param('id') movieId: number,
+    @Body() updateData: updateMovieDto,
+  ) {
     return this.MoviesService.patch(movieId, updateData);
   }
 
   @Delete(':id')
-  remove(@Param('id') movieId: number) {
+  async remove(@Param('id') movieId: number) {
     return this.MoviesService.remove(movieId);
   }
 }

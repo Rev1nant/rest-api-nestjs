@@ -1,36 +1,55 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Movie } from './entities/movie.entity';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { updateMovieDto } from './dto/update-movie.dto';
+import { PrismaService } from 'src/prisma.service';
+import { Movie } from '@prisma/client';
 
 @Injectable()
 export class MoviesService {
-  public movies: Movie[] = [];
+  constructor(private readonly prisma: PrismaService) {}
 
-  getAll(): Movie[] {
-    return this.movies;
+  async getAll(): Promise<Movie[]> {
+    return this.prisma.movie.findMany();
   }
 
-  getOne(movieId: number): Movie {
-    const movie = this.movies.find((movie) => movie.id === movieId);
+  async getOne(id: number): Promise<Movie> {
+    const movie = this.prisma.movie.findUnique({ where: { id } });
     if (!movie) {
-      throw new NotFoundException(`Фильм с id: ${movieId} не найден`);
+      throw new NotFoundException(`Фильм с id: ${id} не найден`);
     }
     return movie;
   }
 
-  create(movieData: CreateMovieDto) {
-    this.movies.push({ id: this.movies.length + 1, ...movieData });
+  async create(movieData: CreateMovieDto): Promise<Movie> {
+    return this.prisma.movie.create({
+      data: {
+        title: movieData.title,
+        year: movieData.year,
+        genres: {
+          create: movieData.genres.map((genre) => ({
+            name: genre.name,
+          })),
+        },
+      },
+    });
   }
 
-  remove(movieId: number) {
-    this.getOne(movieId);
-    this.movies = this.movies.filter((movie) => movie.id !== movieId);
+  async remove(id: number): Promise<Movie> {
+    return this.prisma.movie.delete({ where: { id } });
   }
 
-  patch(movieId: number, updateData: updateMovieDto) {
-    const movie = this.getOne(movieId);
-    this.remove(movieId);
-    this.movies.push({ ...movie, ...updateData });
+  async patch(id: number, movieData: updateMovieDto): Promise<Movie> {
+    return this.prisma.movie.update({
+      where: { id },
+      data: {
+        title: movieData.title,
+        year: movieData.year,
+        genres: {
+          create: movieData.genres.map((genre) => ({
+            name: genre.name,
+          })),
+        },
+      },
+    });
   }
 }
