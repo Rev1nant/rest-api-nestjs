@@ -20,7 +20,7 @@ export class CreateMovieDto {
   @IsOptional()
   @IsObject({ each: true })
   @ApiProperty({
-    example: ['test-genre'],
+    example: [{ name: 'test-genre' }],
     required: true,
   })
   readonly genres: CreateGenreDto[];
